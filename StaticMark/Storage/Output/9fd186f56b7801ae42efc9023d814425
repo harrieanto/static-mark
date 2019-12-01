@@ -1,0 +1,83 @@
+a:2:{s:7:"payload";s:6162:"<h1><strong>Namespace</strong></h1>
+<blockquote>
+<p>Apa itu <code>Namespace</code>?</p>
+</blockquote>
+<p>Namespace adalah fungsi built-in baru di PHP 5 keatas. <code>Namespace</code> merupakan sebuah cara untuk membungkus suatu item. Item disini adalah folder beserta file-filenya.</p>
+<p>Seperti yang kita tahu, jika didalam satu folder tentu tidak bisa ada nama file dengan nama yang sama. Akan tetapi didalam suatu sistem diperbolehkan ada nama file yang sama didalam folder satu dengan folder yang lainnya.</p>
+<p>Jadi boleh-boleh saja jika didalam folder <code>A</code> memiliki file bernama <code>melody.txt</code>. Lalu kemudian didalam folder <code>B</code> juga terdapat nama file dengan nama yang sama sebagaimana yang ada didalam folder <code>A</code>, yaitu <code>melody.txt</code>.</p>
+<p>Misalnya lagi kita membuat dua buah folder. Folder <code>Animal</code> dan <code>Human</code>. Didalam kedua folder terdapat nama file yang sama yang kita sebut sebagai <code>Animal.php</code> dan <code>Human.php</code> seperti dibawah ini:</p>
+<pre><code>/Animal
+    /Animal.php
+    /Human.php
+/Human
+    /Animal.php
+    /Human.php</code></pre>
+<p>Untuk mengakses file <code>Animal.php</code> maupun <code>Human</code> diluar folder kita biasanya harus menggunakan pemisah folder agar sistem mengerti file mana yang akan kita ambil. Disitulah <code>namespace</code> dirancang untuk mengenali file-file yang ada pada masing-masing folder. Tidak jadi persoalan jika didalam satu folder terdapat file bernama <code>Animal.php</code> dan juga file yang sama didalam folder lain. Namespace akan mengenali masing-masing file tersebut berdasarkan namespace yang didefinisikan didalam masing-masing file tersebut.</p>
+<p><strong>Animal.php</strong></p>
+<pre><code class="language-php">namespace my\Animal; //Mendefinisikan namespace
+
+class Animal
+{
+    public function sound()
+    {
+        //
+    }
+}</code></pre>
+<p>Seperti yang terlihat, dibaris kedua kita mendefinisikan nama namespace untuk file <code>Animal.php</code> didalam folder <code>Animal</code>. Bayangkan ketika kita ingin melakukan instantisasi <code>Animal</code> class didalam class <code>Human</code> didalam folder <code>Human</code>.</p>
+<p><strong>Human.php</strong></p>
+<pre><code class="language-php">namespace my\Human; //Mendefinisikan nama namespace
+
+use my\Animal\Animal;
+
+class Human {}
+
+$animal = new Animal();</code></pre>
+<p>Kita bisa menggunakan perintah <code>use</code> kemudian di ikuti oleh nama namespace yang ada didalam class <code>Animal</code>.</p>
+<blockquote>
+<p>Kenapa nama namespace-nya <code>my\Animal\Animal</code>?</p>
+</blockquote>
+<p>Karna kita akan melakukan instantisasi <code>Animal</code> class tanpa harus mendeklarasikan nama namespace-nya pada saat melakukan instantisasi seperti yang ditunjukkan oleh code block dibawah ini:</p>
+<pre><code class="language-php">$animal = new Animal();</code></pre>
+<p>Selain penggunaan <code>use</code> class seperti diatas kita juga memiliki alternative lain  dengan cara mendeklarasikan global namespace atau yang disebut dengan <code>GLOBAL SPACE</code> atau <code>Fully High Qualified Class Name</code>.</p>
+<p><strong>Human.php</strong></p>
+<pre><code class="language-php">namespace my\Human; //mendefinisikan namespace
+
+class Human
+{
+    public function sound()
+    {
+        //
+    }
+}
+
+//memanggil class Animal melalui “GLOBAL SPACE”
+$animal = new \my\AnimalAnimal(); </code></pre>
+<p>Seperti yang bisa kita lihat, kita menggunakan <code>Animal</code> class pada folder <code>Animal</code> didalam <code>Human</code> class pada folder <code>Human</code> dengan cara memanggilnya berdasarkan <code>GLOBAL SPACE</code>.</p>
+<pre><code class="language-php">$animal = new \my\AnimalAnimal();</code></pre>
+<p>Karakter <code>\</code> didepan namespace disebut sebagai <code>leading slash</code>. Leading slash ini diperlukan saat kita melakukan pemanggilan spesifik class berdasarkan <code>GLOBAL SPACE</code>.</p>
+<p>Contoh paling mudah saat kita menggunakan <code>Closure</code>(kita akan membahas ini disub segment selanjutnya). Pada saat kita tidak mendeklarasikan <code>use</code> class terlebih dahulu sebelum kita memanggil <code>Closure</code> class, maka PHP akan melemparkan <code>Exception</code> karna <code>Closure</code> class tidak dapat ditemukan.</p>
+<p>Bayangkan Anda memiliki class <code>EventStub</code> didalam folder <code>Event</code> dengan namespace <code>\Phpfw\App\Events;</code></p>
+<pre><code class="language-php">namespace Phpfw\App\Events;
+
+class EventStub
+{
+    publiic function getName(Closure $closure)
+    {
+        return $closure();
+    }
+}</code></pre>
+<p>Jika kita melakukan instantisasi pada <code>EventStub</code> diatas seperti dibawah ini maka PHP akan melemparkan <code>Exception</code> yang menandakan jika class <code>Phpfw\App\Events\Closure</code> tidak dapat ditemukan.</p>
+<pre><code class="language-php">$event = new EventStub;
+$event-&gt;getName(function() {
+    return “Anthony”
+});</code></pre>
+<blockquote>
+<p>Kenapa <code>Exception</code> tersebut bisa terjadi?</p>
+</blockquote>
+<p>Hal ini disebabkan karena PHP tidak mengenali class <code>Closure</code> yang menjadi fungsionalitas built-in PHP itu sendiri. PHP secara otomatis menganggap jika class yang tidak menggunakan <code>use</code> class atau <code>leading slash</code> merupakan bagian dari class yang terdapat didalam namespace yang sama. Itulah sebabnya mengapa <code>Exception</code> dilemparkan.</p>
+<p>Untuk memperbaiki masalah tersebut kita hanya perlu memberikan salah satu option dari 2(dua) option yang kita miliki, yaitu menggunakan <code>use</code> class atau menggunakan <code>leading slash</code> sebagai <code>GLOBAL SPACE</code>.</p>
+<pre><code class="language-php">public function getName(\Closure $closure)
+{
+    return $closure();
+}</code></pre>
+<p>Sejumlah contoh diatas merupakan cara penulisannya saja. Bagaimana Anda ingin menggunakan high qualified class name(namespace) antara satu dengan yang satunya tidak akan menjadi suatu masalah. Kita akan melihat banyak sekali penggunaan <code>GLOBAL SPACE</code> saat kita mulai membangun infrastruktur framework kita nantinya.</p>";s:7:"expired";i:30;}

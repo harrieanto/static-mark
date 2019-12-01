@@ -1,0 +1,1 @@
+@extend('dashboard/posts/layouts/add')

@@ -1,0 +1,2 @@
+@extend('blog/layouts/home')
+

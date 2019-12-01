@@ -1,0 +1,60 @@
+a:2:{s:7:"payload";s:5006:"<h1><strong>Basic Object Oriented Programming</strong></h1>
+<p>Membangun framework bisa dibilang bukan perkara mudah. Kita yang masih tahap beginner/pemula mungkin akan kesulitan beralih dari gaya pemrograman php procedural kebentuk object oriented programming.</p>
+<p>Framework itu sendiri tidak lagi terdiri dari gaya pemrograman procedural melainkan semua yang ada didalam framework itu sudah object oriented.</p>
+<p>Maka dari itu sebelum kita melangkah lebih jauh untuk membuat framework kita sendiri lebih baik mempelajari terlebih dahulu sebagian dari bagian-bagian object oriented programming.</p>
+<p>Karna memang dari awal buku ini tidak dirancang untuk membahas basic-basic <code>OOP</code>, maka Anda tidak akan menemui pembahasan yang mendetail mengenai Object Oriented Programming. Untuk mempelajari dasar-dasar <code>OOP</code> Anda bisa membeli bukunya pak Muhammad Surya Ikhsanudin, beliau menulis materi mengenai <code>OOP</code> beberapa waktu lalu yang mungkin cocok untuk Anda. Buku ini juga tidak membahas mengenai framework laravel meskipun dalam sejumlah kasus didalamnya menyinggung mengenai laravel framework. Selain itu juga sudah banyak sekali buku-buku maupun online course yang membahas mengenai framework tersebut seperti buku laravel+vue dan kawankoding. Saya yakin masih banyak lagi tempat yang menyediakan pembahasan mengenai framework laravel secara mendalam.</p>
+<p>Jika Anda kebetulan sudah mempunyai basic OOP maupun framework laravel, maka itu menjadi modal yang bagus sekali karena seperti yang disebutkan sebelumnya jika didalam membangun Aplikasi Framework didalam buku ini akan bersinggungan dengan dua hal tersebut.</p>
+<p>Meskipun begitu pada bab Basic Object Oriented Programming ini kita akan membahas terlebih dahulu beberapa bagian kecil dari object oriented programming yang nantinya akan banyak kita gunakan dalam membangun Aplikasi Framework maupun aplikasi-aplikasi yang ingin Anda bangun nantinya, seperti autoload, namespace, closure, abstract, primitive types, type hinting dan juga interface.</p>
+<p>Selain itu meskipun didalam buku ini tidak membahas teknik OOP secara mendasar akan tetapi kita juga akan belajar OOP secara tidak langsung didalam keseluruhan buku ini. Untuk itu jika Anda setidaknya sudah memahami apa itu OOP, maksud dan tujuannya serta bisa mendeklarasikan class maka buku ini juga sesuai untuk Anda.</p>
+<p>Sebelum terlalu jauh silahkan siapkan kopi dan cemilan Anda untuk menemani Anda karna perjalanan dari sini insyaallah bakalan panjang...</p>
+<h1><strong>Autoloader</strong></h1>
+<blockquote>
+<p>Apa itu autoloader?</p>
+</blockquote>
+<p>Tentu kita pasti sering menggunakan <code>include</code> ataupun <code>require</code> di setiap project web kita. Syntax <code>include</code> memasukkan source lain yang kita butuhkan dari source file dihalaman lain ke file yang kita kehendaki.</p>
+<p>Sekarang perhatikan code block <code>autoloader.php</code> berikut:</p>
+<pre><code class="language-php">spl_autoload_register(function($class) {
+    include $class.”.php”;
+});
+
+$book = new Book;
+$title = “A Handy Book Make Youll Saya Aha..”;
+$book = $book-&gt;title($title);
+
+$author = new Author(“harrieanto”,  $book);
+
+echo $author-&gt;show();</code></pre>
+<p>Yang kita lakukan pada block code diatas adalah menuliskan function <code>spl_autoload_register()</code> yang bertanggung jawab untuk mengatur dan melakukan return value dari nama class kita. Nama class harus sama dengan nama file jika tidak maka kita akan dilempari <code>fatal error</code>.</p>
+<pre><code class="language-php">Fatal error: Uncaught Error: Class ‘Book’ not found</code></pre>
+<p>Berikut ini class <code>Book</code> dan <code>Author</code>-nya:</p>
+<p><strong>Book.php</strong></p>
+<pre><code class="language-php">class Book
+{
+    public function title($name)
+    {
+        return $name;
+    }
+}</code></pre>
+<p><strong>Author.php</strong></p>
+<pre><code class="language-php">class Author
+{
+    protected $book;
+    protected $name;
+
+    public function __construct($book, $name)
+    {
+        $this-&gt;book = $book;
+        $this-&gt;name = $name;
+    }
+
+    public function show()
+    {
+        return “These \”{$this-&gt;book}\” book was written by {$this-&gt;name}”;
+    }
+}</code></pre>
+<p>Sekarang output object hasil dari instantisasi <code>Author</code> class dan juga method <code>show()</code> diatas akan seperti dibawah ini:</p>
+<blockquote>
+<p>These “A Handy Book make Youll Say Aha..” book was written by harrieanto</p>
+</blockquote>
+<p>Tentu contoh autoloading menggunakan <code>spl_autoload_register()</code> ini adalah autoloading dasar, kita akan melihat bagaimana menggunakan <code>autoload</code> didalam project kita dengan composer autoload yang akan secara otomatis menangani autoload pada project aplikasi kita.</p>
+<p>Dibandingkan menulis autoloader kita sendiri kita hanya perlu menggunakan composer autoload sehingga kita bisa lebih fokus pada proses development fitur aplikasi yang lebih penting.</p>";s:7:"expired";i:30;}

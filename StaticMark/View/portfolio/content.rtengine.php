@@ -1,0 +1,1 @@
+@extend('portfolio/layouts/content')

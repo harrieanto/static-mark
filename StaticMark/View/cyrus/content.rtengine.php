@@ -1,0 +1,1 @@
+@extend('cyrus/layouts/content')

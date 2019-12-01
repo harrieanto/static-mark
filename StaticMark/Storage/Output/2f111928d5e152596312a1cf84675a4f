@@ -1,0 +1,105 @@
+a:2:{s:7:"payload";s:8398:"<h1><strong>Abstract Class</strong></h1>
+<p>Abstract adalah suatu type yang tidak bisa digunakan secara langsung. Type abstract bisa digunakan didalam pendeklarasian class maupun method dari class itu sendiri.</p>
+<pre><code class="language-php">
+abstract class Event
+{
+    abstract function getName();
+}
+</code></pre>
+<p>Jika kita perhatikan, pada block code diatas terdapat 2(dua) buah type abstract, yaitu satu didalam <code>Event</code> class dan satunya lagi berada didalam method dari class <code>Event</code> itu sendiri.</p>
+<p>Seperti yang telah kita ketahui sebelumnya jika class ataupun method dengan type abstract tidak dapat dideklarasikan secara langsung.</p>
+<blockquote>
+<p>Lalu bagaimana seharusnya kita menggunakan class atau method dengan type abstract ini?</p>
+</blockquote>
+<p>Untuk memahami ini terlebih dahulu silahkan perhatikan contoh pemanggilan abstract method <code>getName()</code> pada abstract <code>Event</code> class diatas seperti yang ditunjukkan oleh code block dibawah ini:</p>
+<pre><code class="language-php">//...
+
+class RegisterMemberEvent extends Event
+{
+    public function getName()
+    {
+        return 'MemberWasRegistered';
+    }
+}
+
+$member = new RegisterMemberEvent;
+echo $member-&gt;getName();
+</code></pre>
+<p>Sampai disini ketika kita menjalankan code diatas, maka kita akan dilempari output <code>MemberWasRegistered</code>. Sekarang bagaimana jika skenarionya kita tidak mendeklarasikan method <code>getName()</code> didalam child class yang mewarisi method <code>getName()</code> dari class parent, yaitu <code>Event</code> class?</p>
+<pre><code class="language-php">//...
+
+class RegisterMemberEvent extends Event
+{
+    //
+}
+</code></pre>
+<p>Jika kita menjalankan class <code>RegisterMemberEvent</code> diatas sekali lagi maka kita akan dilempari <code>Exception</code> seperti:</p>
+<pre><code>PHP Fatal Error: Class `RegisterMemberEvent` contains 1 abstract method
+and must therefore be declared abstract
+or implement the remaining methods (Event::getName)</code></pre>
+<blockquote>
+<p>Kenapa <code>Fatal Error</code> diatas terjadi?</p>
+</blockquote>
+<p>Sederhananya fatal error terjadi karna kita tidak mendeklarasikan abstract method yang menjadi contract bagi setiap child class yang mewarisi class maupun method abstract. Setiap child class harus mendeklarasikan concrete method dari abstract method yang didefinisikan oleh parent class, atau jika tidak maka PHP akan secara otomatis melemparkan fatal error.</p>
+<p>Pada intinya apa yang kita atur didalam abstract class bersama methodnya, maka class yang mewarisi abstract class harus mengikuti aturan main dari abstract class tersebut. Selain itu setiap concrete class hanya bisa melakukan extend/mewarisi satu abstract class. Berbeda lagi dengan interface yang umumnya class concrete kita bisa mengimplementasikan banyak interface dan interface juga bisa melakukan <code>extends</code> terhadap interface lain layaknya suatu class melakukan <code>extends</code> class lain. Kita akan membahas mengenai interface ini sebentar lagi.</p>
+<blockquote>
+<p>Mengenal Abstract Class Lebih Jauh</p>
+</blockquote>
+<p>Abstract class juga merupakan bagian yang sangat penting didalam ekosistem object oriented programming. Dengan abstraction mampu membuat code program kita reusable dan memiliki standarisasi dalam mengimplementasikan suatu fungsionalitas.</p>
+<p>Kita bisa melihat kedalam <code>Laravel</code> framework saat kita mendefinisikan service providing. Katakanlah kita memiliki service yang disebut <code>DoctrineGateway</code>. <code>DoctrineGateway</code> ini memiliki fungsionalitas untuk menyediakan sebuah jembatan bagi aplikasi kita untuk terhubung dengan data soure melalui <code>Doctrine ORM</code>(Object Relational Mapping) dibandingkan <code>Eloquent ORM</code>.</p>
+<pre><code class="language-php">class DoctrineGateway
+{
+    protected $devMode = true;
+    protected $entityPath;
+
+    public function makeYamlMetadata(array $dbParams)
+    {
+        //do the things
+    }
+
+    public function makeAnnotationMetadata(array $dbParams)
+    {
+        //do the things
+    }
+
+    public function makeXmlMetadata(array $dbParams)
+    {
+        //do the things
+    }
+}</code></pre>
+<p>Seperti yang terlihat, <code>DoctrineGateway</code> kita menjadi sebuah jembatan untuk menghubungkan aplikasi kita dengan data source menggunakan <code>Doctrine ORM</code> melalui salah satu dari ketiga option yang ada, yaitu <code>YAML</code>, <code>Annotation</code> dan juga <code>XML</code> meta data.</p>
+<p>Sebelum kita dapat menggunakan service <code>DoctrineGateway</code> tersebut, didalam framework <code>Laravel</code> kita perlu mengatur semacam service providing seperti dibawah ini:</p>
+<pre><code class="language-php">class DoctrineGatewayServiceProvider extends ServiceProvider
+{       
+    public function register()
+    {
+        $this-&gt;app-&gt;singleton(
+            EntityManagerInterface::class, function($app) {
+            $orm = new DoctrineGateway();
+
+            $orm-&gt;setEntityPath($this
+                -&gt;app['config']['doctrine']['mappings']['paths']);
+
+            $orm = $orm-&gt;makeYamlMetadata($this-&gt;getDbParams());
+
+            return $orm;
+        });
+    }
+}</code></pre>
+<p>Jika Anda memperhatikan dengan lebih detail terhadap <code>ServiceProvider</code> class tersebut, maka kita akan dipertemukan dengan abstract class <code>ServiceProvider</code>. Abstract class tersebut memiliki sejumlah method diantaranya yang paling wajib digunakan adalah method <code>register()</code>.</p>
+<blockquote>
+<p>Mengapa method <code>register()</code> ini harus selalu kita definisikan saat kita membuat class <code>ServiceProvider</code> baru?</p>
+</blockquote>
+<p>Jika Anda tidak mendefinisikan class <code>register()</code> pada child class, maka <code>Laravel</code> akan melemparkan <code>Exception</code> yang menyatakan jika didalam class parent <code>ServiceProvider</code> tersebut terdapat satu method abstract yang harus didefinisikan didalam child class, yaitu method <code>register()</code>.</p>
+<p>Inilah yang kemudian kita sebut sebagai standarisasi dalam sebuah fungsionalitas yang harus di implementasikan oleh concrete code/code client yang menggunakan fungsionalitas tersebut.</p>
+<p>Kalau kita bisa menamai ulang, Abstract class bisa kita sebut juga sebagai <code>optional requirement</code> atau <code>optional contract</code>.</p>
+<blockquote>
+<p>Mengapa?</p>
+</blockquote>
+<p>Hal ini disebabkan karena tidak semua method yang ada didalam abstract class harus didefinisikan ulang didalam child class yang mewarisi abstract class tersebut selama method tersebut tidak bersifat wajib atau dengan kata lain method tersebut merupakan abstract method. Abstract class ini tentu sangat berbeda sekali dengan interface. Interface merupakan sebuah contract yang harus di implementasikan oleh masing-masing code client yang mengimplementasikan contract interface tersebut. Dengan catatan, kecuali jika suatu interface atau abstract method sudah dipenuhi contractnya didalam suatu class kemudian kita melakukan inheritance/pewarisan pada child class kita dari class tersebut. Contoh paling nyata dari kasus ini bisa Anda lihat pada implementasi yang disediakan oleh <code>PHP-FIG</code> <code>PSR-3</code> untuk standarisasi mekanisme logger system melalui link dibawah ini:</p>
+<p><a href="https://github.com/php-fig/log">https://github.com/php-fig/log</a></p>
+<blockquote>
+<p>The Right Tool for The Right Job</p>
+</blockquote>
+<p>Dengan mengetahui perbedaan dari kedua konsep ini, yaitu abstract class dan juga interface maka selanjutnya kita bisa memilih dan memilah mengenai tool yang tepat yang seharusnya kita gunakan untuk mememenuhi requirement dari fungsionalitas yang ingin kita bangun.</p>
+<p>Nantinya didalam pembangunan maupun penggunaan <code>Aplikasi Framework</code> kita juga tidak akan terlepas dari abstract class. Kita akan melihat bagaimana kita menggunakan optional contract ini saat kita membangun infrastruktur service providing dan juga static/facade accesor pada <code>Aplikasi Framework</code> kita nantinya. Untuk itu memahami apa itu abstract method dan bagaimana abstract method itu digunakan terlebih dahulu merupakan langkah awal yang juga harus dipahami bukan hanya pada saat kita nantinya membangun <code>Aplikasi Framework</code>, akan tetapi dalam daily basis kita dalam memprogram dalam kasus-kasus tertentu.</p>";s:7:"expired";i:30;}

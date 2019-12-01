@@ -1,0 +1,85 @@
+.container-notify {
+    position: fixed;
+	z-index: 999;
+	pointer-events:none;
+    left:0;
+    right:0;
+    opacity: 0.85;
+}
+
+.notify {
+    display: table;
+	position: relative;
+	width: 50%;
+	height: auto;
+	border-radius: 0.5em;
+	padding: 12px 24px;
+	margin: 12px 0;
+	pointer-events:auto;
+}
+
+.notify span {
+	color: var(--color-white);
+}
+
+.notify-info {
+    width: auto;
+    height: 2.5em;
+	float: left;
+	margin: 0 0.5em 0 0;
+	padding: 0.5em;
+	font-weight: bolder;
+	text-align: center;
+    text-transform: uppercase;
+	border-radius: 0.2em;
+    background: var(--color-white);
+}
+
+.notify-info > span {
+	color: var(--color-blacklighter);
+    position: relative;
+    top: 20%;
+    -webkit-transform: translateY(-20%);
+    -moz-transform: translateY(-20%);
+    -ms-transform: translateY(-20%);
+    -o-transform: translateY(-20%);
+    transform: translateY(-20%);
+}
+
+.notify-close-button {
+	width: 1.5em;
+	height: 1.5em;
+	float: right;
+	padding: 0.1em;
+	font-size: 1.725rem;
+	text-align: center;
+	background: inherit;
+	color: var(--color-white);
+}
+
+.bottom {
+	bottom: 0.5em;
+}
+
+.top {
+    top: 0.5em;
+}
+
+.notify-right {
+    float: right;
+    margin: 8px;
+}
+
+.notify-left {
+    float: left;
+    margin: 8px;
+}
+
+.notify-center {
+    left:50%;
+    -webkit-transform: translateX(-50%);
+    -moz-transform: translateX(-50%);
+    -ms-transform: translateX(-50%);
+    -o-transform: translateX(-50%);
+    transform: translateX(-50%);
+}

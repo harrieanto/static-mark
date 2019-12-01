@@ -1,0 +1,124 @@
+a:2:{s:7:"payload";s:12316:"<h1><strong>Anonymous Function dan Closure</strong></h1>
+<p>Berbicara mengenai <code>\Closure</code> tidak bisa dipisahkan dari yang namanya <code>anonymous function</code>. Jika Anda sebelumnya sudah memahami apa itu anonymous function, maka memahami closure tidak akan membutuhkan waktu yang lama. Jika Anda belum mengenal apa itu anonymous function, maka dalam sub bab kali ini kita juga akan mengupas tentang anonymous function ini.</p>
+<p><code>Anonymous function</code> merupakan sebuah function tanpa nama. Anonymous function ini berbeda dengan function-function pada umumnya yang harus mencantumkan nama fungsi sebelum kita bisa memanggil dan menggunakannya. Kita bisa lihat pada code block dibawah ini:</p>
+<pre><code class="language-php">function( $greeting ) {
+    return $greeting;
+}</code></pre>
+<p>Sekarang coba Anda bandingkan dengan normal function seperti dibawah ini:</p>
+<pre><code class="language-php">function greeting ( $greeting ) {
+    return $greeting;
+}</code></pre>
+<blockquote>
+<p>Sekarang coba Anda bayangkan jika Anda ingin menggunakan anonymous function. Pertanyaannya adalah bagaimana kira-kira Anda akan melakukannya?</p>
+</blockquote>
+<p>Agar kita dapat menggunakan <code>anonymous function</code> kita bisa menggunakan <code>name binding</code>, atau sederhananya kita perlu mengikat/melakukan binding kedalam suatu variable yang telah dideklarasikan. Jika kita sudah mengikat anonymous function kedalam suatu variable maka variable tersebut berubah menjadi  object <code>\Closure</code>.</p>
+<blockquote>
+<p>Lalu apa sebenarnya <code>\Closure</code> itu? <code>Anonymous function</code> itu sendiri-kah?</p>
+</blockquote>
+<p>Secara garis besar <code>\Closure</code> merupakan sebuah fungsi yang memiliki fungsi didalamnya. Misalnya kita melakukan penulisan anonymous function seperti berikut ini:</p>
+<pre><code class="language-php">Route::get(‘greeting’,  function() {
+    $closure = function() {
+        return “Who am I?”  
+    };
+
+    return $closure();
+});</code></pre>
+<p>Sekarang Anda memiliki gambaran bagaimana sebuah function/method(dalam ruang lingkup class kita biasa memanggil function sebagai method) bisa memiliki atau mengimplementasikan sebuah function didalamnya.</p>
+<p>Jika Anda perhatikan dengan baik <code>\Closure</code> pada contoh diatas, <code>\Closure</code> adalah suatu class yang digunakan untuk mewakili suatu <code>anonymous function</code>. <code>\Closure</code> sendiri sebenarnya adalah class built-in PHP yang memiliki kemampuan untuk menerjemahkan setiap <code>anonymous function</code> yang dibuat menjadi type object <code>\Closure</code>.</p>
+<p>Jika Anda masih belum paham sampai sejauh ini coba perhatikan contoh berikut ini:</p>
+<pre><code class="language-php">var_dump( function ($greeting) {
+    return $greeting;
+});</code></pre>
+<p>Pada contoh diatas setiap kali anonymous function di ikatkan kedalam suatu variable, maka seketika itu pula variable tersebut menjadi object <code>\Closure</code>. Disebabkan oleh hal tersebutlah, yang sering kali membuat kita kebingungan membedakan perbedaan antara <code>\Closure</code> dan <code>Anonymous</code> function. Akan tetapi dengan penjelasan diatas kita sekarang sudah lebih mengetahui dengan lebih detail perbedaan diantara anonymous function dan juga <code>\Closure</code>. Jika Anda masih tidak percaya dengan <code>result</code> dari contoh diatas, silahkan Anda mencobanya sendiri.</p>
+<p>Untuk memahami lebih jauh lagi tentang <code>\Closure</code> ini maka kita akan membedah lebih detail lagi mengenai <code>\Closure</code> tersebut.</p>
+<blockquote>
+<p>Kenapa <code>\Closure</code>?</p>
+</blockquote>
+<p>Karna didalam pembangunan dan ataupun penggunaan framework yang kita bangun nantinya juga akan banyak menggunakan fungsionalitas dari <code>\Closure</code>. Untuk itu kita akan memahami <code>\Closure</code> ini dengan lebih detail lagi didalam sub segment kali ini.</p>
+<pre><code class="language-php">$closure = new \Closure();</code></pre>
+<p>Jika contoh diatas Anda jalankan maka Anda akan mendapatkan <code>fatal error</code>:</p>
+<pre><code>PHP Catchable fatal error:
+Instantiation of 'Closure' is not allowed</code></pre>
+<p>Fatal error diatas menandakan jika class <code>\Closure</code> tidak untuk di-instantisasi, karna class <code>\Closure</code> sendiri adalah private constructor dimana pemanggilannya tidak bisa dilakukan dari luar ataupun class hasil tiruan dari class <code>\Closure</code> tersebut.</p>
+<p>Constructor <code>\Closure</code> sendiri tidak memiliki parameter dan tidak melakukan return value apapun. Adapun beberapa hal yang perlu Anda ketahui mengenai class <code>\Closure</code> ini adalah jika <code>\Closure</code> hanya memiliki 5(lima) method yang masing-masing di wakili oleh:</p>
+<blockquote>
+<p><strong>construct, </strong>invoke,  bindTo(), call() dan juga bind()</p>
+</blockquote>
+<p>Selain itu <code>\Closure</code> diatur kedalam bentuk <code>final</code> class dan <code>\Closure</code> juga bukan merupakan interface.</p>
+<p>Semenjak PHP menginstantisasi setiap kali anonymous function dibuat maka kita tidak perlu lagi menginstantisasi <code>\Closure</code>. Oleh karena itu kita bisa membuat function seperti dibawah ini:</p>
+<pre><code class="language-php">function() { return true; }</code></pre>
+<blockquote>
+<p>Sekarang masalahnya adalah bagaimana kita menggunakan <code>\Closure</code> melalui nameless function/anonymous function diatas?</p>
+</blockquote>
+<p>Solusinya adalah dengan membuat suatu variable dimana kita akan menyimpan anonymous function diatas kedalam variable tersebut dan memanggilnya seperti saat kita sedang memanggil function biasa.</p>
+<pre><code class="language-php">$greeting = function() { return true; };
+
+echo $greeting; // dengan echo secara langsung
+echo say($greeting); //echoing melalui normal function</code></pre>
+<p>Sekarang kita seharusnya bisa memanggilnya dengan berbagai macam cara semenjak function diatas berbentuk variable. Misalnya kita bisa menggunakannya sebagai parameters function. Pada contoh pemanggilan anonymous function diatas memakai <code>echo</code> secara langsung ataupun echoing melalui normal function maka kita akan mejumpai <code>fatal error</code> karna tidak diperbolehkannya suatu class dipanggil atau diubah menjadi <code>string</code>.</p>
+<blockquote>
+<p>Lalu bagaimana sekarang sebenarnya cara menggunakan <code>\Closure</code> ini?</p>
+</blockquote>
+<p>Sebelum berlanjut lebih jauh code keseluruhan dari contoh kita kali ini akan terlihat seperti dibawah ini:</p>
+<pre><code class="language-php">$greeting = function( $name ) { return true; };
+
+function say( $hello ) { return $hello; }
+
+echo $greeting;
+echo say($greeting); </code></pre>
+<p>Sekali lagi, pemanggilan <code>\Closure</code> seperti contoh diatas akan mengeluarkan pesan error dimana tidak diperbolehkannya suatu class untuk diconvert menjadi sebuah <code>string</code>.</p>
+<p>Untuk menyelesaikan permasalahan tersebut kita bisa menggunakan <code>\Closure</code> diberbagai context seperti melalui <code>Callback atau Callable Function</code>,  <code>Variable Inheritance</code>, <code>Variable Assignment</code>, <code>Recursion</code> dan bisa juga dilampirkan didalam suatu function atau yang disebut dengan <code>attache state</code></p>
+<p>Sebelum menjelaskan lebih jauh mengenai sejumlah context penggunaan closure diatas ada beberapa fakta yang perlu Anda pahami juga mengenai closure ini.</p>
+<p>Nameless function atau anonymous function harus diletakkan didalam variable kecuali jika anonymous function tersebut digunakan sebagai <code>callable/callback</code>. Berikut ini merupakan contoh advance dari implementasi <code>callable/callback</code> pada sebuah <code>Routing</code>.</p>
+<pre><code class="language-php">Route::get(‘greeting’,  function() {});</code></pre>
+<p>Berhubung nameless funtion atau anonymous function berperan sebagai variable maka variable tersebut bisa digunakan di berbagai tempat seperti yang sudah dijelaskan sebelumnya, sebut saja sebagai parameters function kecuali melakukan echoing variable tersebut secara langsung.</p>
+<p>Setelah nameless function atau anonymous function diletakkan pada suatu variable yang sudah didefinisikan, maka anonymous function tersebut berubah lagi menjadi object dari class <code>\Closure</code>. </p>
+<p>Dengan disertakannya PHP Magic <code>__invoke()</code> didalam class <code>\Closure</code> maka dengan ini kita bisa memanggil variable tersebut seperti function biasa. Contoh:</p>
+<pre><code class="language-php">$greeting()</code></pre>
+<p>Yang perlu di ingat adalah <code>$greeting</code> dengan memakai tanda kurung berarti variable tersebut telah berubah seakan-akan menjadi function meskipun sekilas terlihat seperti variable karna ada tanda dollar (<code>$</code>) didepan <code>greeting</code>.</p>
+<p>Ketika anonymous function atau variable telah berubah menjadi object dari class <code>\Closure</code> maka kita bisa menginjeksikan suatu paramater atau disebut juga dengan <code>callable</code>. Contoh:</p>
+<pre><code class="language-php">$var = function($greeting) {};</code></pre>
+<p>Anonymous function diatas telah berubah menjadi object dari class <code>\Closure</code>. Selanjutnya kita melakukan pemanggilan object tersebut seperti function biasa:</p>
+<pre><code class="language-php"> $var($greeting);</code></pre>
+<p>Sebenarnya <code>\Closure</code> pada dasarnya hanyalah seperti <code>string</code> atau <code>integer</code> pada built-in PHP. <code>\Closure</code> hanyalah suatu type yang didefinisikan didalam PHP Engine sebagai type. Seperti halnya <code>string</code> dan juga <code>integer</code>, kita tidak perlu tahu bagaimana suatu result dihasilkan. </p>
+<p>Mulai dari sini kita akan memahami sejumlah kategori berbeda mengenai penggunaan <code>\Closure</code>.</p>
+<h3><strong>Callable/Callback Function</strong></h3>
+<pre><code class="language-php">$names = [ ‘Anthony’,  ‘Yohanes’,  ‘John Smith’ ];
+
+$greeting = function ( $name ) {
+    return “Hello, {$name}”; 
+};
+
+call_user_func_array( $greeting,  $names );</code></pre>
+<h3><strong>Variable Inheritance</strong></h3>
+<pre><code class="language-php">$name = ‘Anthony’;
+
+$greeting = function () use ( $name ) {
+    return “Hello, {$name}”;
+};
+
+echo $greeting();</code></pre>
+<h3><strong>Variable Assignment</strong></h3>
+<pre><code class="language-php">$greeting = function ( $name ) {
+    return “Hello, {$name}”;
+};
+
+echo $greeting(‘Anthony’);</code></pre>
+<h3><strong>Dilampirkan didalam suatu function/attache state</strong></h3>
+<pre><code class="language-php">function greeting( $firstname ) {
+    return function( $lastname ) use ($firstname) {
+        return sprintf( “%s:%s”,  $firstname,  $lastname );
+    };
+}
+
+$greeting = greeting(“John”);
+echo $greeting(“Smith”);</code></pre>
+<h3><strong>Recursion</strong></h3>
+<pre><code class="language-php">$greeting = function () use ( &amp;$name ) {
+    return $name;
+};
+
+print_r($greeting());</code></pre>
+<p>Sejauh ini kita sudah meng-explorasi PHP <code>\Closure</code> secara mendalam dari pengertian, basic penggunaan sampai penggunaan <code>\Closure</code> yang lebih complex seperti yang telah kita uraikan diatas. Tentu saja dengan hadirnya <code>\Closure</code> ini kita bisa melakukan experiment lebih jauh dan membuat pekerjaan kita terselesaikan dengan lebih mudah.</p>
+<p>Contoh penggunaan <code>\Closure</code> dalam aplikasi nyata adalah pada component-component framework modern seperti <code>Routing</code> dan juga aplikasi e-commerce seperti <code>Shopping Cart</code>. Tentu penggunaan <code>\Closure</code> tidak berhenti disitu saja. <code>Routing</code> dan <code>Shopping Cart</code> hanya sebagaian kecil dari penggunaan <code>\Closure</code>. Pada dasarnya untuk menggunakan <code>\Closure</code> itu tergantung juga dengan kebutuhan dan keperluan aplikasi Anda. </p>
+<p>Seperti halnya <code>namespace</code>, kita juga akan banyak sekali menggunakan <code>\Closure</code> dalam membangun infrastruktur framework kita. Kita akan melihat dengan lebih detail lagi bagaimana menggunakan <code>\Closure</code> didalam kasus yang nyata. Untuk keperluan itulah, sebelum kita bisa membangun <code>Aplikasi Framework</code> kita, pahami terlebih dahulu <code>\Closure</code> pada sub segment ini.</p>";s:7:"expired";i:30;}

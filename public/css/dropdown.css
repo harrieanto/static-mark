@@ -1,0 +1,436 @@
+ul.navigation {
+  list-style-type: none;
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+}
+
+ul.navigation li {
+  display: inline-block;
+  margin-left: 5px;
+  margin-right: 5px;
+  padding: .1em;
+  min-width: 50px;
+  height: 100%;
+  text-align: center;
+}
+
+ul.dropdown{
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+ul.dropdown li.dropdown-collapse{
+  position: absolute;
+  display: none;
+  text-align: left;
+  margin: 0;
+  padding: 0;
+  margin-top: 1em;
+  height: auto;
+  width: auto;
+  text-decoration:none;
+  z-index: 6;
+}
+
+ul.dropdown li.dropdown-collapse::after {
+  content: " ";
+  position: absolute;
+  bottom: 100%;
+  border: 10px solid;
+  border-color: transparent transparent currentColor transparent;
+}
+
+ul.dropdown li.dropdown-collapse ul{
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+ul.dropdown li.dropdown-collapse ul li{
+  display: block;
+  margin: 0;
+  padding: .5em;
+}
+
+.dropdown > .disabled  a,
+.dropdown > .disabled  a:hover,
+.dropdown > .disabled  a:focus {
+  color: #777;
+  pointer-events:none !important;
+}
+.dropdown > .disabled  a:hover,
+.dropdown > .disabled  a:focus {
+  text-decoration: none;
+  cursor: not-allowed !important;
+  background-color: transparent;
+  background-image: none;
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+}
+
+.carousel[data-target^="carousel"] {
+  position: relative !important;
+  height: auto;
+}
+
+.carousel[data-target^="carousel"] > div[data-target^="card"] {
+  display: none;
+}
+
+.carousel-button[data-target^="carousel-button"] {
+  position: absolute;
+  top:0;
+  bottom: 0;
+  left:0;
+  right:0;
+  height: auto;
+  width: inherit;
+  pointer-events: none;
+}
+
+.carousel-button a[data-action^="slideRight"], .carousel-button a[data-action^="slideLeft"] {
+  min-width: 1em;
+  position: absolute;
+  top: 50%;
+  pointer-events: auto;
+  background: rgba(0, 0, 0, 0.20);
+}
+
+.carousel-button a[data-action^="slideRight"] i, .carousel-button a[data-action^="slideLeft"] i {
+  color: #fff;
+}
+
+.carousel-button a[data-action^="slideRight"] {
+  right: 0;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+}
+
+.carousel-button a[data-action^="slideLeft"] {
+  left: 0;
+  transform: translate(50%, -50%);
+  z-index: 1;
+}
+
+.vertical-center {
+  min-width: 75px;
+  position: relative;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.blink-cursor {
+  border-right: 0.5px currentColor solid;
+  animation: blinkCursor 1s steps(1) infinite;
+}
+
+@keyframes blinkCursor{
+	50% {
+	  border-color: transparent;
+	}
+}
+
+/**
+ * We need create relative container
+ * So everything our contents will be in it
+ */
+.curtains {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/**
+ * Our curtain panel have to positioned fixed to the window
+ * So the lid of curtain can cover up any content inside the container
+ */
+.curtain-panel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  bottom: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: transparent;
+}
+
+/**
+ * Here our main content will take place
+ * Beneath .curtain-content-wrapper > .curtain-content
+ */
+.curtain-content-wrapper {
+  cursor: auto;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.curtain-content {
+  position: relative;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  height: 100%;
+}
+
+.curtain-panel .curtain {
+  display: flex;
+  transition: transform 0.5s ease-out;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  /**
+   * There should be 2(two) side panel
+   * So here we will divide the width of curtain by 2(50%)
+   */
+  width: 50%;
+  height: 100%;
+}
+
+.curtain-panel .curtain:before {
+  content: attr(data-title);
+  text-transform: uppercase;
+  position: absolute;
+  width: 200%;
+  text-align: center;
+}
+
+.curtain-panel .curtain:after, .curtain-panel .curtain-title:after {
+  content: '';
+  background-size: 20px 20px;
+  display: block;
+  height: 10px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.curtain-panel .curtain:after {
+  background-image: radial-gradient(circle at 10px -5px, rgba(0, 0, 0, 0) 12px, #fff 13px);
+}
+
+.curtain-panel .curtain-title:after {
+  background: transparent;
+}
+
+/**
+ * Place the one side curtain panel to left
+ */
+.curtain-panel .curtain-left:before {
+  left: 0;
+}
+
+/**
+ * Place the one side curtain panel to right
+ */
+.curtain-panel .curtain-right:before {
+  right:0;
+}
+
+.curtain-panel .curtain-title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position:absolute;
+  left:50%;
+  bottom:0;
+  transform: translate(-50%, 0);
+  height:100%;
+  width: 100%;
+}
+
+.curtain-button, .label-curtain-button {
+  position: fixed;
+  z-index: 2;
+  cursor: pointer;
+}
+
+.curtain-button {
+  width: 100%;
+  height:100%;
+  opacity: .02;
+  filter: alpha(opacity=0.02);
+}
+
+.label-curtain-button {
+  width: 100%;
+  height: 100%;
+  /** We need disable pointer event as we don't need it
+  **/
+  pointer-events: none;
+  top: 50%;
+  /** We keep the background priority to transparent
+  So the label button won't break your content
+  **/
+  background: transparent !important;
+  transition: visibility 0.5s ease-out;
+}
+
+.label-curtain-button:after {
+  content: " ";
+  border-style: solid;
+  border-width: 20px;
+  position: absolute;
+  bottom: 100%;
+  right: 0;
+  border-color: transparent currentColor transparent transparent;
+  pointer-events: auto;
+}
+
+.curtain-button:checked {
+  visibility: hidden;
+}
+
+.curtain-button:checked + .label-curtain-button {
+  /** The button is checked so show the label in the need to lid off the curtains **/
+  visibility: visible;
+}
+
+.curtain-button:checked ~ .curtain-panel .curtain-title {
+  display: none;
+}
+
+.curtain-button:checked ~ .curtain-panel .curtain-left {
+  transform: translateX(calc(-100% + .2em));
+  pointer-events: auto;
+}
+
+.curtain-button:checked ~ .curtain-panel .curtain-right {
+  transform: translateX(calc(100% - .2em));
+  pointer-events: auto;
+}
+
+.page-scroll {
+  display: flex;
+  justify-content: center;
+  position: fixed;
+  align-items: flex-start;
+  flex-flow: column nowrap;
+  right: calc(-100%-5%);
+  top:50%;
+  transform: translate(0, -50%);
+  cursor: pointer;
+  background: transparent !important;
+  overflow-y: auto;
+  width: 105%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.scroll-bar-wrapper {
+  position: relative;
+  width: auto;
+  height: auto;
+  overflow: auto;
+  pointer-events: auto;
+}
+
+.scroll-bar {
+  width: 9px;
+  height: 9px;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  background: currentColor;
+  margin: 1em;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  position: relative;
+}
+
+.scroll-bar a {
+  width: 9px;
+  height: 9px;
+  position: relative;
+  background: transparent;
+  border-radius: 50%;
+  text-decoration: none;
+}
+
+ul.pagination {
+  display: block;
+  overflow-x: auto;
+  overflow-y: hidden;
+  position: relative;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  left: 50%;
+  transform: translate(-50%, 0);
+  white-space: nowrap;
+}
+
+ul.pagination li {
+  width: 100%;
+  height: auto;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+ul.pagination li ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  width: auto;
+  height: 3.5em;
+  text-align: center;
+}
+
+ul.pagination li ul li {
+  display: inline-block;
+  position: relative;
+  width: 5em;
+  margin: 0 .5em;
+  height: 100%;
+  background: #34495e;
+  cursor: pointer;
+}
+
+ul.pagination li ul li:hover, ul.pagination li ul a:hover {
+  background: rgba(0, 0, 0, .2) !important;
+  color: #fff !important;
+}
+
+ul.pagination li ul li > a {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+ul.pagination li ul li > a span {
+  position: relative;
+  display: block;
+  color: #fff;
+}
+
+.sharer {
+  white-space: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  width: 100%;
+  height: auto;
+  display: flex;
+  justify-content: center;
+}
+
+.sharer .sharer-panel {
+  width: 100%;
+  position: relative;
+}
+
+.sharer .sharer-panel button {
+  display: inline-block;
+}

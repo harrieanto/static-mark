@@ -1,0 +1,103 @@
+a:2:{s:7:"payload";s:9940:"<h1><strong>Interface</strong></h1>
+<blockquote>
+<p>Apa itu Interface?</p>
+</blockquote>
+<p>Sebenarnya interface sama dengan abstract class. Perbedaannya adalah seperti yang sudah dijelaskan sebelumnya, yaitu satu class hanya bisa mewarisi satu class abstract, akan tetapi class bisa mengimplementasikan banyak interface. Dan interface juga bisa melakukan inheritance dari interface lain sebagaimana class melakukan inheritance dari class lain seperti yang ditunjukkan oleh code block dibawah ini:</p>
+<pre><code class="language-php">&lt;?php
+namespace Medium\Style\Domain\Repository;
+
+interface IUserRepository extends RepositoryInterface
+{
+    //
+}
+</code></pre>
+<p>Proses inheritance pada interface berbeda dengan inheritance yang berlangsung pada class biasa. Sebagaimana class dapat mengimplemenasikan banyak interface, suatu interface juga dapat mewarisi banyak interface.</p>
+<pre><code class="language-php">&lt;?php
+namespace Medium\Style\Domain\Repository;
+
+interface IUserRepository extends 
+  RepositoryInterface, 
+  AnotherRelatedInterface
+{
+    //
+}</code></pre>
+<p>Interface bisa kita sebut juga sebagai contract wajib yang harus di implementasikan oleh masing-masing concrete code/client code, sedangkan abstract class merupakan optional contract dimana kita bisa memberikan nilai/method-method default pada suatu class yang tidak harus di implementasikan ulang oleh child class sesuai dengan porsi kebutuhannya. Berbeda dengan interface, interface tidak bisa mengandung body method sehingga kita tidak bisa memberikan nilai default sebagaimana yang bisa dilakukan oleh abstract class.</p>
+<p>Yang perlu dicatat dari abstract class ini adalah, memang benar abstract class bisa mengandung method-method default, akan tetapi jika kita melakukan type abstract pada suatu method(entah itu pada abstract class maupun class biasa), maka method tersebut juga tidak bisa mengandung body method, untuk itu setiap kali child class melakukan pewarisan pada parent class yang mendefinisikan abstract method, child class tersebut harus mendeklarasikan implementasi concrete dari abstract method tersebut.</p>
+<pre><code class="language-php">abstract class Manager
+{
+  abstract function getDefaultDriver();
+}</code></pre>
+<blockquote>
+<p>Memahami Penggunaan Interface Lebih Jauh</p>
+</blockquote>
+<p>Terkadang kita dihadapkan pada suatu kondisi yang membingungkan dalam menerapkan suatu konsep didalam programming. Sama halnya ketika kita ingin mengimplementasikan interface kedalam bagian dari life cycle code program kita.</p>
+<p>Konsep penggunaan interface terkadang menjadi satu hal yang membingungkan bagi kita dan sering kita salah artikan jika penggunaan interface sama sekali tidak diperlukan. Meskipun pada awalnya pernyataan tersebut benar jika penggunaan interface terlihat tidaklah begitu penting dan bahkan hampir jarang sekali kita gunakan didalam menulis code program. Akan tetapi dibalik fakta tersebut Anda perlu mengetahui jika:</p>
+<blockquote>
+<p>Interface menyediakan suatu contract dimana dengan system contract inilah yang akan memastikan jika terdapat standarisasi didalam setiap pengembangan aplikasi kita.</p>
+<p>Seperti apakah sebenarnya interface itu?</p>
+</blockquote>
+<p>Seperti yang sudah dijelaskan diawal jika interface hanyalah suatu contract yang menyatakan jika class apapun yang mengimplementasikan interface ini akan memiliki method yang sama yang telah didefinisikan sebelumnya.</p>
+<p>Sekarang coba Anda perhatikan interface <code>Event</code> berikut ini:</p>
+<pre><code class="language-php">interface Event
+{
+    public function getName();
+}</code></pre>
+<p>Kemudian kita ingin menulis event baru berdasarkan <code>Event</code> interface tersebut, sebut saja <code>MemberWasRegistered</code> dan <code>BillingWasPaid</code> event. Kedua event ini sama-sama mengimplementasikan interface <code>Event</code> diatas.</p>
+<pre><code class="language-php">class MemberWasRegistered implements Event
+{
+    public function getName()
+    {
+        return ‘MemberWasRegistered’;
+    }
+}</code></pre>
+<pre><code class="language-php">class BillingWasPaid implements Event
+{
+    public function getName()
+    {
+        return ‘BillingWasPaid’;
+    }
+}</code></pre>
+<p>Dengan melihat contoh bagaimana mengaplikasikan <code>Event</code> interface diatas kedalam concrete class memastikan jika semua class memiliki method yang telah didefinisikan didalam contract sehingga kita memiliki standarisasi didalam code base program kita.</p>
+<p>Dengan standarisasi ini kita tidak perlu khawatir mengenai implementasi concrete class apa yang seharusnya diberikan pada sebuah fungsionalitas selama concrete class tersebut mengimplementasikan interface yang sama.</p>
+<p>Sekarang kita memiliki dua event, yang mana kedua event tersebut masing-masing akan bertugas untuk memberikan ucapan selamat ketika ada seorang user yang baru saja berhasil melakukan registrasi atau berhasil melakukan pembayaran billing atau tagihan.</p>
+<p>Didalam sebuah event kita memerlukan yang namanya <code>event listener</code>. Event listener ini akan bertugas untuk mendengarkan setiap event yang sedang berlangsung.</p>
+<pre><code class="language-php">interface Listener
+{
+    public function listen($eventName, Event $event)
+}
+
+class MemberWasRegisteredListener implements Listener
+{
+    public function listen($eventName, Event $event)
+    {
+        //do the things 
+    }
+}
+
+class BillingWasPaid implements Listener
+{
+    public function listen($eventName, Event $event)
+    {
+        //do the things 
+    }
+}</code></pre>
+<p>Seperti yang bisa kita lihat pada method <code>listen()</code> didalam kedua listener diatas, yang kita lakukan adalah melakukan type-hint <code>Event</code> interface kedalam parameter kedua method <code>listen()</code> tersebut. Sehingga dengan hal ini masing-masing <code>Listener</code> class akan selalu mendapatkan <code>event</code> yang sesuai meskipun kita mengganti implementasi concrete dari <code>Event</code> interface. Ketika kita mengganti implementasi concrete <code>Event</code> interface dari event <code>MemberWasRegistered</code> menjadi <code>BillingWasPaid</code>, maka pergantian atau perpindahan tersebut tidak akan menjadi sebuah masalah, karna keduanya sama-sama mengimplementasikan interface yang sama. Inilah yang kemudian kita sebut sebagai <code>Application Flexibility</code>.</p>
+<p>Pada real application suatu event tidak akan bisa berjalan tanpa adanya <code>event dispatcher</code>.</p>
+<blockquote>
+<p>Apa itu <code>Event Dispatcher</code>?</p>
+</blockquote>
+<p>Kita akan membahas dengan lebih detail apa itu <code>event dispatcher</code> saat kita memasuki bab <code>Domain Event</code>.</p>
+<pre><code class="language-php">class Dispatcher
+{
+    public function fire(Event $event)
+    {
+        $eventName = $event-&gt;getName();
+        //do more things    
+    }
+}</code></pre>
+<p>Seperti yang bisa kita lihat pada method <code>fire()</code> didalam <code>Dispatcher</code> class diatas, yang kita lakukan masih sama dengan yang kita lakukan pada method <code>listen()</code> pada <code>Listener</code> class, yaitu melakukan type-hint <code>Event</code> interface kedalam parameter method <code>fire()</code> tersebut. Sehingga dengan hal ini <code>Dispatcher</code> class akan selalu yakin jika dependency yang diberikan memang benar-benar sebuah <code>event</code> yang di implementasikan melalui <code>Event</code> interface dan memiliki method <code>getName()</code> untuk mengambil nama event yang sedang berlangsung.</p>
+<p>Sekali lagi, kita akan membahas apa itu <code>Event</code>, <code>Listener</code> dan juga <code>Event Dispatcher</code> pada saat kita berada pada bab <code>Domain Event</code>. Selain itu kita juga akan membahas dengan lebih detail lagi bagaimana menggunakan interface ini setelah kita sampai pada pembahasan <code>code coupling</code>. Didalam <code>Solid/Clean Architecture</code>, interface memegang peranan penting bagaimana code program kita bisa terhindar dari <code>code coupling</code> sehingga kita bisa memiliki code base yang <code>readable</code>, <code>refactorable</code>, <code>testable</code> dan juga <code>maintainable</code>.</p>
+<p>Dengan memahami pengertian ini Anda sebenarnya sudah memahami apa itu <code>interface</code> dan <code>contract</code> itu sendiri. Pada framework <code>Laravel</code> Anda akan menemukan banyak sekali contract dalam implementasi code program. Jika Anda mulai memahami pentingnya penggunaan interface, maka pada waktu yang bersamaan Anda juga akan mulai menyadari betapa pentingnya tool ini sebagai suatu kebiasaan yang harus kita adopsi untuk menulis code program yang <code>SOLID</code>.</p>
+<p>Didalam pembangunan <code>Aplikasi Framework</code> kita juga tidak akan terlepas dari interface ini, bagaimana kita memasang, merubah atau mengganti suatu fungsionalitas tanpa mempengaruhi fungsionalitas yang sudah ada merupakan sebuah tool yang harus kita mengerti dan kita kuasai sedari sekarang agar kita memiliki pondasi aplikasi yang kokoh dan <code>SOLID</code>. Dengan pondasi menulis code program yang kokoh akan membantu memudahkan kita dalam mengelola maupun mengembangkan aplikasi atau produk kita kedepannya.</p>
+<p>Ketika Anda ingin melakukan refactoring code atau beralih menggunakan framework atau library lain dibandingkan framework atau library yang Anda gunakan saat ini, maka dengan pondasi code base yang kokoh seharusnya Anda bisa dengan lebih mudah, lebih murah dan lebih cepat untuk melakukannya.</p>
+<p>Selanjutnya kita akan masuk kedalam pembahasan <code>Solid Architecture</code>. Disana kita akan belajar bagaimana kita menulis code program yang <code>SOLID</code> sebagaimana yang baru saja kita ulas secara singkat diatas. Akan tetapi sebelum kita masuk kedalam materi tersebut kita akan mempelajari lebih dulu mengenai <code>Design Pattern</code> yang juga akan kita gunakan sebagai tool untuk membangun environment code base aplikasi yang solid.</p>";s:7:"expired";i:30;}

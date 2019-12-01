@@ -1,0 +1,72 @@
+a:2:{s:7:"payload";s:7835:"<h1><strong>Primitives Type dan Type Hinting</strong></h1>
+<p><img src="/public/images/portfolio/blog.jpg" alt="Primitives Type dan Type Hinting" class="img-responsive" /></p>
+<blockquote>
+<p>Apa itu Primitives Type?</p>
+</blockquote>
+<p>Kita tahu jika terdapat sejumlah primitives type didalam setiap bahasa pemrograman dan tak terkecuali PHP. Tanpa primitives type ini khususnya didalam PHP akan menjadi salah satu sumber utama yang akan menyebabkan terjadinya kebocoran aplikasi.</p>
+<blockquote>
+<p>Kenapa?</p>
+</blockquote>
+<p>Karna PHP sendiri merupakan bahasa yang longgar, kita bisa mendefinisikan variable atau argument function tanpa type data apapun, sehingga nilai apapun yang kita berikan kedalam variable ataupun function tersebut bisa berupa type data apapun seperti <code>string</code>, <code>integer</code>, <code>boolean</code> value dan sejenisnya.</p>
+<p>Meskipun didalam beberapa artikel yang saya baca menyebutkan jika ekosistem PHP akan mengarah pada strict type kedepannya. Akan tetapi itu bukanlah masalah yang harus kita pebincangkan saat ini. Memahami primitives type ini jauh lebih penting sekali agar kita tehindar dari kebocoran aplikasi.</p>
+<p>Bayangkan ketika Anda membuat function dan Anda mengharapkan nilai yang harus diberikan kedalam function melalui parameter function tersebut berupa <code>string</code> type.</p>
+<blockquote>
+<p>Tanpa adanya primitives type ini apa yang akan terjadi?</p>
+</blockquote>
+<p>Seperti yang disebutkan sebelumnya jika PHP merupakan bahasa yang longgar. Tanpa primitives type ini siapapun bisa memberikan nilai dengan type apa saja kedalam function tersebut. Tentu ini akan menjadi lubang yang akan mengancam aplikasi kita tanpa adanya validasi data. Validasi sangat penting sekali untuk dilakukan jika tidak sudah pasti akan menjadi ancaman bagi aplikasi kita.</p>
+<p>Validasi merupakan bagian penting dalam sebuah system tak terkecuali dalam ruang lingkup web aplikasi atau web development. Contoh lain katakanlah saat Anda mengosongkan atau salah mengetikkan username dan/atau password Anda ketika Anda login kedalam <code>Facebook</code> account. Maka secara otomatis system <code>Facebook</code> akan memberikan suatu dialog kesalahan dimana Anda harus memasukkan username dan/atau password dengan benar sebelum Anda bisa memasuki akun facebook Anda. Begitu juga dengan primtives type didalam PHP, kita menggunakan primitives type ini untuk memvalidasi inputan atau data yang masuk kedalam function atau method kita. </p>
+<p>Sejumlah primitives type yang bisa kita gunakan untuk validasi data bisa berupa:</p>
+<pre><code class="language-php">int, string, array, bool, dan juga object</code></pre>
+<p>Biasanya kita akan menggunakan primitives type tersebut dilampirkan sebelum parameter function seperti dibawah ini sehingga function kita hanya bisa diberikan nilai yang benar-benar sesuai dengan type data tersebut:</p>
+<pre><code class="language-php">public function primitives(string $name, int $old, $payloads)
+{
+    $array = (array) $payloads;
+}</code></pre>
+<p>Bagian lain yang menarik adalah pada saat kita mendeklarasikan type array <code>(array) $payloads</code> seperti diatas. Type tersebut akan memastikan bahwa nilai <code>$payloads</code> benar-benar merupakan array data. Ketika data payload yang diberikan bukan berupa array maka <code>PHP</code> akan secara otomatis membuat payload menjadi array sehingga ketika kita melakukan looping semisal dengan <code>foreach</code> maka function tersebut akan tetap berjalan tanpa issue.</p>
+<p>Selain itu terdapat juga primitives type berdasarkan built-in function yang hanya bisa digunakan didalam tubuh method atau function seperti <code>is_bool()</code>, <code>is_int()</code>, <code>is_array()</code>, <code>is_object()</code>, <code>is_double()</code>, <code>is_resource()</code>, <code>is_null()</code> dan juga variasi dari <code>ctype_*</code>. Anda bisa mencari yang lainnya secara mandiri didokumentasi <code>PHP</code>.</p>
+<pre><code class="language-php">public function primitives($isItTrue)
+{
+    return is_bool($isItTrue);
+}</code></pre>
+<p>Kita juga bisa memberikan strict type yang harus dikembalikan atau menjadi return value dari suatu method class seperti dibawah ini:</p>
+<pre><code class="language-php">public function spellIt(): WhatToSpellClass
+{
+    //
+}</code></pre>
+<p>Type diatas menandakan jika method <code>spellIt()</code> diatas harus mengembalikan return value dari object <code>WhatToSpellClass</code>. Jika tidak maka PHP akan melemparkan <code>Exception</code> sebagai gantinya.</p>
+<blockquote>
+<p>Apa itu Type Hinting?</p>
+</blockquote>
+<p>Kita akan menggunakan banyak sekali type hinting dalam membangun maupun menggunakan framework yang akan kita bangun nantinya. Sangat beralasan sekali jika kita juga harus memahami type hinting ini terlebih dahulu sebelum kita bisa melangkah lebih jauh.</p>
+<p>Sekilas memang Type Hinting ini sama dengan primitives type. Keduanya sama-sama digunakan untuk memberikan type pada suatu argument. Type Hinting ini lebih mudah untuk dijelaskan melalui contoh seperti yang tergambar pada block code dibawah ini:</p>
+<pre><code class="language-php">class EventStub
+{
+    public function getName()
+    {
+        //  do the things
+    }
+}
+
+class ListenerStub
+{
+    public function listen(string $eventName, EventStub $event)
+    {
+        //do the things 
+    }
+}</code></pre>
+<p>Jika kita perhatikan pada class <code>ListenerStub</code> diatas, maka kita akan menjumpai dua parameter didalam method <code>listen()</code>. Parameter kedua dari method <code>listen()</code> tersebutlah yang kemudian kita sebut sebagai <code>type hinting</code>.</p>
+<p>Untuk menggunakan class <code>ListenerStub</code> diatas kita perlu memasukkan object hasil instantisasi dari class <code>EventStub</code>.</p>
+<pre><code class="language-php">$listener = new ListenerStub;
+
+$listener-&gt;listen('EventStub', new EventStub);</code></pre>
+<p>Jika kita tidak memberikan object dari <code>EventStub</code> kedalam parameter kedua method <code>listen()</code>, maka PHP akan melemparkan <code>Exception</code> yang menandakan jika parameter kedua dari method <code>listen()</code> tersebut harus mengimplementasikan object <code>EventStub</code>.</p>
+<pre><code class="language-php">class WrongTypeHinting
+{
+    //
+}
+
+$listener = new ListenerStub;
+$listener-&gt;listen('EventStub', new WrongTypeHinting);</code></pre>
+<p>Seperti itulah bagaimana type hinting berjalan didalam PHP. Tidak ada yang spesial sama sekali selain hanya memberikan sebuah type argument berdasarkan object tertentu. Type hinting ini juga akan menjadi bagian dari <code>Dependency Injection</code>. Kita akan melihat bagaimana bisa type hinting disebut sebagai bagian dari <code>Dependency Injection</code> pada saat kita memasuki pembahasan mengenai <code>Solid Architecture</code>.</p>
+<p>Kita akan melihat bagaimana good practice menggunakan type hinting ini didalam keseluruhan code base kita sehingga kita memiliki code base yang mudah untuk dilakukan refactoring dan juga testing. Didalam pembahasan mengenai <code>Solid Architecture</code> kita akan banyak merubah sudut pandang kita mengenai sejumlah konsep yang Anda sadari maupun tidak Anda sadari telah Anda adopsi kedalam kebiasaan Anda dalam menulis code program berbasis object oriented programming.</p>
+<p>Kita akan membahas lebih detail lagi saat kita memasuki pembahasan mengenai <code>Solid/Clean Architecture</code>. Selain itu seperti yang juga sudah disebut sebelumnya jika kita juga akan banyak sekali mengimplementasikan type hinting didalam setiap bagian pembangunan infrastruktur framework kita. Disebabkan oleh hal inilah, memahami konsep dasar dari object oriented programming sebelum kita terjun membangun framework yang bisa kita kontrol sepenuhnya sangat penting sekali untuk dilakukan pertama kali.</p>";s:7:"expired";i:30;}

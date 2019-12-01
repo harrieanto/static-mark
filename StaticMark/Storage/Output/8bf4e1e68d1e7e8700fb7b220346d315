@@ -1,0 +1,219 @@
+a:2:{s:7:"payload";s:16973:"<h1>bramus/router</h1>
+<p><a href="http://travis-ci.org/bramus/router"><img src="https://img.shields.io/travis/bramus/router.svg?style=flat-square" alt="Build Status" /></a> <a href="https://github.com/bramus/router"><img src="http://img.shields.io/badge/source-bramus/router-blue.svg?style=flat-square" alt="Source" /></a> <a href="https://packagist.org/packages/bramus/router"><img src="https://img.shields.io/packagist/v/bramus/router.svg?style=flat-square" alt="Version" /></a> <a href="https://packagist.org/packages/bramus/router/stats"><img src="https://img.shields.io/packagist/dt/bramus/router.svg?style=flat-square" alt="Downloads" /></a> <a href="https://github.com/bramus/router/blob/master/LICENSE"><img src="https://img.shields.io/packagist/l/bramus/router.svg?style=flat-square" alt="License" /></a></p>
+<p>A lightweight and simple object oriented PHP Router.
+Built by Bram(us) Van Damme <em>(<a href="https://www.bram.us">https://www.bram.us</a>)</em> and <a href="https://github.com/bramus/router/graphs/contributors">Contributors</a></p>
+<h2>Features</h2>
+<ul>
+<li>Static Route Patterns</li>
+<li>Dynamic Route Patterns</li>
+<li>Optional Route Subpatterns</li>
+<li>Supports <code>GET</code>, <code>POST</code>, <code>PUT</code>, <code>DELETE</code>, <code>OPTIONS</code>, <code>PATCH</code> and <code>HEAD</code> request methods</li>
+<li>Supports <code>X-HTTP-Method-Override</code> header</li>
+<li>Subrouting</li>
+<li>Allowance of <code>Class@Method</code> calls</li>
+<li>Custom 404 handling</li>
+<li>Before Route Middlewares</li>
+<li>Before Router Middlewares</li>
+<li>After Router Middleware (Finish Callback)</li>
+<li>Works fine in subfolders</li>
+</ul>
+<h2>Prerequisites/Requirements</h2>
+<ul>
+<li>PHP 5.3 or greater</li>
+<li><a href="https://gist.github.com/bramus/5332525">URL Rewriting</a></li>
+</ul>
+<h2>Installation</h2>
+<p>Installation is possible using Composer</p>
+<pre><code>composer require bramus/router ~1.3</code></pre>
+<h2>Demo</h2>
+<p>A demo is included in the <code>demo</code> subfolder. Serve it using your favorite web server, or using PHP 5.4+'s built-in server by executing <code>php -S localhost:8080</code> on the shell. A <code>.htaccess</code> for use with Apache is included.</p>
+<p>Additionally a demo of a mutilingual router is also included. This can be found in the <code>demo-multilang</code> subfolder and can be ran in the same manner as the normal demo.</p>
+<h2>Usage</h2>
+<p>Create an instance of <code>\Bramus\Router\Router</code>, define some routes onto it, and run it.</p>
+<pre><code class="language-php">// Require composer autoloader
+require __DIR__ . '/vendor/autoload.php';
+
+// Create Router instance
+$router = new \Bramus\Router\Router();
+
+// Define routes
+// ...
+
+// Run it!
+$router-&gt;run();</code></pre>
+<h3>Routing</h3>
+<p>Hook <strong>routes</strong> (a combination of one or more HTTP methods and a pattern) using <code>$router-&gt;match(method(s), pattern, function)</code>:</p>
+<pre><code class="language-php">$router-&gt;match('GET|POST', 'pattern', function() { … });</code></pre>
+<p><code>bramus/router</code> supports <code>GET</code>, <code>POST</code>, <code>PUT</code>, <code>DELETE</code>, and <code>OPTIONS</code> HTTP request methods. Pass in a single request method, or multiple request methods separated by <code>|</code>.</p>
+<p>When a route matches, the attached <strong>route handling function</strong> will be executed. The route handling function must be a <a href="http://php.net/manual/en/language.types.callable.php">callable</a>. Only the first route matched will be handled. When no matching route is found, an <code>'HTTP/1.1 404 Not Found'</code> status code will be returned.</p>
+<p>Shorthands for single request methods are provided:</p>
+<pre><code class="language-php">$router-&gt;get('pattern', function() { /* ... */ });
+$router-&gt;post('pattern', function() { /* ... */ });
+$router-&gt;put('pattern', function() { /* ... */ });
+$router-&gt;delete('pattern', function() { /* ... */ });
+$router-&gt;options('pattern', function() { /* ... */ });
+$router-&gt;patch('pattern', function() { /* ... */ });</code></pre>
+<p>You can use this shorthand for a route that can be accessed using any method:</p>
+<pre><code class="language-php">$router-&gt;all('pattern', function() { … });</code></pre>
+<p>Note: Routes must be hooked before <code>$router-&gt;run();</code> is being called.</p>
+<h3>Route Patterns</h3>
+<p>Route patterns can be static or dynamic.</p>
+<ul>
+<li><strong>Static Route Patterns</strong> are essentially URIs, e.g. <code>/about</code>.</li>
+<li><strong>Dynamic Route Patterns</strong> are Perl-compatible regular expressions (PCRE) that resemble URIs (e.g. <code>/movies/(\d+)</code>) or URIs with <em>placeholders</em> (e.g. <code>/movies/{id}</code>)</li>
+</ul>
+<h4>Dynamic PCRE-based Route Patterns</h4>
+<p>Commonly used PCRE-based subpatterns within Dynamic Route Patterns are:</p>
+<ul>
+<li><code>\d+</code> = One or more digits (0-9)</li>
+<li><code>\w+</code> = One or more word characters (a-z 0-9 _)</li>
+<li><code>[a-z0-9_-]+</code> = One or more word characters (a-z 0-9 _) and the dash (-)</li>
+<li><code>.*</code> = Any character (including <code>/</code>), zero or more</li>
+<li><code>[^/]+</code> = Any character but <code>/</code>, one or more</li>
+</ul>
+<p>Note: The <a href="https://www.cs.washington.edu/education/courses/190m/12sp/cheat-sheets/php-regex-cheat-sheet.pdf">PHP PCRE Cheat Sheet</a> might come in handy.</p>
+<p>The <strong>subpatterns</strong> defined in Dynamic Route Patterns are converted to parameters which are passed into the route handling function. Prerequisite is that these subpatterns need to be defined as <strong>parenthesized subpatterns</strong>, which means that they should be wrapped between parens:</p>
+<pre><code class="language-php">// Bad
+$router-&gt;get('/hello/\w+', function($name) {
+    echo 'Hello ' . htmlentities($name);
+});
+
+// Good
+$router-&gt;get('/hello/(\w+)', function($name) {
+    echo 'Hello ' . htmlentities($name);
+});</code></pre>
+<p>Note: The leading <code>/</code> at the very beginning of a route pattern is not mandatory, but is recommended.</p>
+<p>When multiple subpatterns are defined, they resulting <strong>route handling parameters</strong> are passed into the route handling function in the order they are defined in:</p>
+<pre><code class="language-php">$router-&gt;get('/movies/(\d+)/photos/(\d+)', function($movieId, $photoId) {
+    echo 'Movie #' . $movieId . ', photo #' . $photoId);
+});</code></pre>
+<h4>Dynamic Placeholder-based Route Patterns</h4>
+<p>If you don't want to do any regex pattern matchining for route patterns, you can – alternatively – use the more easy <em>“placeholders”</em>. Placeholders are strings surrounded by curly braces, e.g. <code>{name}</code>. You don't need to add parens around placeholders.</p>
+<p>Placeholders are easier to use than PRCEs, but offer you less control as they internally get translated to a PRCE that matches any character (<code>.*</code>).</p>
+<pre><code class="language-php">$router-&gt;get('/movies/{movieId}/photos/{photoId}', function($movieId, $photoId) {
+    echo 'Movie #' . $movieId . ', photo #' . $photoId);
+});</code></pre>
+<p>Note: the name of the placeholder does not need to match with the name of the parameter that is passed into the route handling function:</p>
+<pre><code class="language-php">$router-&gt;get('/movies/{foo}/photos/{bar}', function($movieId, $photoId) {
+    echo 'Movie #' . $movieId . ', photo #' . $photoId);
+});</code></pre>
+<h3>Optional Route Subpatterns</h3>
+<p>Route subpatterns can be made optional by making the subpatterns optional by adding a <code>?</code> after them. Think of blog URLs in the form of <code>/blog(/year)(/month)(/day)(/slug)</code>:</p>
+<pre><code class="language-php">$router-&gt;get(
+    '/blog(/\d+)?(/\d+)?(/\d+)?(/[a-z0-9_-]+)?',
+    function($year = null, $month = null, $day = null, $slug = null) {
+        if (!$year) { echo 'Blog overview'; return; }
+        if (!$month) { echo 'Blog year overview'; return; }
+        if (!$day) { echo 'Blog month overview'; return; }
+        if (!$slug) { echo 'Blog day overview'; return; }
+        echo 'Blogpost ' . htmlentities($slug) . ' detail';
+    }
+);</code></pre>
+<p>The code snippet above responds to the URLs <code>/blog</code>, <code>/blog/year</code>, <code>/blog/year/month</code>, <code>/blog/year/month/day</code>, and <code>/blog/year/month/day/slug</code>.</p>
+<p>Note: With optional parameters it is important that the leading <code>/</code> of the subpatterns is put inside the subpattern itself. Don't forget to set default values for the optional parameters.</p>
+<p>The code snipped above unfortunately also responds to URLs like <code>/blog/foo</code> and states that the overview needs to be shown - which is incorrect. Optional subpatterns can be made successive by extending the parenthesized subpatterns so that they contain the other optional subpatterns: The pattern should resemble <code>/blog(/year(/month(/day(/slug))))</code> instead of the previous <code>/blog(/year)(/month)(/day)(/slug)</code>:</p>
+<pre><code class="language-php">$router-&gt;get('/blog(/\d+(/\d+(/\d+(/[a-z0-9_-]+)?)?)?)?', function($year = null, $month = null, $day = null, $slug = null) {
+    // ...
+}</code></pre>
+<p>Note: It is highly recommended to <strong>always</strong> define successive optional parameters.</p>
+<p>To make things complete use <a href="http://www.php.net/manual/en/regexp.reference.repetition.php">quantifiers</a> to require the correct amount of numbers in the URL:</p>
+<pre><code class="language-php">$router-&gt;get('/blog(/\d{4}(/\d{2}(/\d{2}(/[a-z0-9_-]+)?)?)?)?', function($year = null, $month = null, $day = null, $slug = null) {
+    // ...
+}</code></pre>
+<h3>Subrouting / Mounting Routes</h3>
+<p>Use <code>$router-&gt;mount($baseroute, $fn)</code> to mount a collection of routes onto a subroute pattern. The subroute pattern is prefixed onto all following routes defined in the scope. e.g. Mounting a callback <code>$fn</code> onto <code>/movies</code> will prefix <code>/movies</code> onto all following routes.</p>
+<pre><code class="language-php">$router-&gt;mount('/movies', function() use ($router) {
+
+    // will result in '/movies/'
+    $router-&gt;get('/', function() {
+        echo 'movies overview';
+    });
+
+    // will result in '/movies/id'
+    $router-&gt;get('/(\d+)', function($id) {
+        echo 'movie id ' . htmlentities($id);
+    });
+
+});</code></pre>
+<p>Nesting of subroutes is possible, just define a second <code>$router-&gt;mount()</code> in the callable that's already contained within a preceding <code>$router-&gt;mount()</code>.</p>
+<h3><code>Class@Method</code> calls</h3>
+<p>We can route to the class action like so:</p>
+<pre><code class="language-php">$router-&gt;get('/(\d+)', '\App\Controllers\User@showProfile');</code></pre>
+<p>When a request matches the specified route URI, the <code>showProfile</code> method on the <code>User</code> class will be executed. The defined route parameters will be passed to the class method.</p>
+<p>If most/all of your handling classes are in one and the same namespace, you can set the default namespace to use on your router instance via <code>setNamespace()</code></p>
+<pre><code class="language-php">$router-&gt;setNamespace('\App\Controllers');
+$router-&gt;get('/users/(\d+)', 'User@showProfile');
+$router-&gt;get('/cars/(\d+)', 'Car@showProfile');</code></pre>
+<h3>Custom 404</h3>
+<p>Override the default 404 handler using <code>$router-&gt;set404(function);</code></p>
+<pre><code class="language-php">$router-&gt;set404(function() {
+    header('HTTP/1.1 404 Not Found');
+    // ... do something special here
+});</code></pre>
+<p>Or using <code>$router-&gt;set404('Class@Method');</code></p>
+<pre><code class="language-php">$router-&gt;set404('\App\Controllers\Error@notFound');</code></pre>
+<p>The 404 will be executed when no route pattern was matched to the current URL.</p>
+<h3>Before Route Middlewares</h3>
+<p><code>bramus/router</code> supports <strong>Before Route Middlewares</strong>, which are executed before the route handling is processed.</p>
+<p>Like route handling functions, you hook a handling function to a combination of one or more HTTP request methods and a specific route pattern.</p>
+<pre><code class="language-php">$router-&gt;before('GET|POST', '/admin/.*', function() {
+    if (!isset($_SESSION['user'])) {
+        header('location: /auth/login');
+        exit();
+    }
+});</code></pre>
+<p>Unlike route handling functions, more than one before route middleware is executed when more than one route match is found.</p>
+<h3>Before Router Middlewares</h3>
+<p>Before route middlewares are route specific. Using a general route pattern (viz. <em>all URLs</em>), they can become <strong>Before Router Middlewares</strong> <em>(in other projects sometimes referred to as before app middlewares)</em> which are always executed, no matter what the requested URL is.</p>
+<pre><code class="language-php">$router-&gt;before('GET', '/.*', function() {
+    // ... this will always be executed
+});</code></pre>
+<h3>After Router Middleware / Run Callback</h3>
+<p>Run one (1) middleware function, name the <strong>After Router Middleware</strong> <em>(in other projects sometimes referred to as after app middlewares)</em> after the routing was processed. Just pass it along the <code>$router-&gt;run()</code> function. The run callback is route independent.</p>
+<pre><code class="language-php">$router-&gt;run(function() { … });</code></pre>
+<p>Note: If the route handling function has <code>exit()</code>ed the run callback won't be run.</p>
+<h3>Overriding the request method</h3>
+<p>Use <code>X-HTTP-Method-Override</code> to override the HTTP Request Method. Only works when the original Request Method is <code>POST</code>. Allowed values for <code>X-HTTP-Method-Override</code> are <code>PUT</code>, <code>DELETE</code>, or <code>PATCH</code>.</p>
+<h2>Integration with other libraries</h2>
+<p>Integrate other libraries with <code>bramus/router</code> by making good use of the <code>use</code> keyword to pass dependencies into the handling functions.</p>
+<pre><code class="language-php">$tpl = new \Acme\Template\Template();
+
+$router-&gt;get('/', function() use ($tpl) {
+    $tpl-&gt;load('home.tpl');
+    $tpl-&gt;setdata(array(
+        'name' =&gt; 'Bramus!'
+    ));
+});
+
+$router-&gt;run(function() use ($tpl) {
+    $tpl-&gt;display();
+});</code></pre>
+<p>Given this structure it is still possible to manipulate the output from within the After Router Middleware</p>
+<h2>A note on working with PUT</h2>
+<p>There's no such thing as <code>$_PUT</code> in PHP. One must fake it:</p>
+<pre><code class="language-php">$router-&gt;put('/movies/(\d+)', function($id) {
+
+    // Fake $_PUT
+    $_PUT  = array();
+    parse_str(file_get_contents('php://input'), $_PUT);
+
+    // ...
+
+});</code></pre>
+<h2>A note on making HEAD requests</h2>
+<p>When making <code>HEAD</code> requests all output will be buffered to prevent any content trickling into the response body, as defined in <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.4">RFC2616 (Hypertext Transfer Protocol -- HTTP/1.1)</a>: <em>The HEAD method is identical to GET except that the server MUST NOT return a message-body in the response. The metainformation contained in the HTTP headers in response to a HEAD request SHOULD be identical to the information sent in response to a GET request.</em></p>
+<h2>Unit Testing &amp; Code Coverage</h2>
+<p><code>bramus/router</code> ships with unit tests using <a href="https://github.com/sebastianbergmann/phpunit/">PHPUnit</a>.</p>
+<ul>
+<li>
+<p>If PHPUnit is installed globally run <code>phpunit</code> to run the tests.</p>
+</li>
+<li>
+<p>If PHPUnit is not installed globally, install it locally throuh composer by running <code>composer install --dev</code>. Run the tests themselves by calling <code>vendor/bin/phpunit</code>.</p>
+<p>The included <code>composer.json</code> will also install <code>php-code-coverage</code> which allows one to generate a <strong>Code Coverage Report</strong>. Run <code>phpunit --coverage-html ./tests-report</code> (XDebug required), a report will be placed into the <code>tests-report</code> subfolder.</p>
+</li>
+</ul>
+<h2>Acknowledgements</h2>
+<p><code>bramus/router</code> is inspired upon <a href="https://github.com/chriso/klein.php">Klein</a>, <a href="https://github.com/radiosilence/Ham">Ham</a>, and <a href="https://bitbucket.org/JREAM/route">JREAM/route</a> . Whilst Klein provides lots of features it is not object oriented. Whilst Ham is Object Oriented, it's bad at <em>separation of concerns</em> as it also provides templating within the routing class. Whilst JREAM/route is a good starting point it is limited in what it does (only GET routes for example).</p>
+<h2>License</h2>
+<p><code>bramus/router</code> is released under the MIT public license. See the enclosed <code>LICENSE</code> for details.</p>";s:7:"expired";i:30;}
